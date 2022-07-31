@@ -7,7 +7,7 @@
     "build": "npx prisma migrate deploy && tsc",
     "start": "node dist/src/app/server.js",
     "dev": "nodemon src/app/server.ts",
-    "test": "dotenv -e .env.test prisma db push && dotenv -e .env.test prisma db seed && dotenv -e .env.test jest --passWithNoTests --noStackTrace --runInBand"
+    "test": "dotenv -e .env.test prisma db push && dotenv -e .env.test jest --passWithNoTests --noStackTrace --runInBand"
   },
   "keywords": [],
   "author": "",
