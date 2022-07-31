@@ -12,14 +12,14 @@ beforeEach(async () => {
 
 describe("Music gets suite", () => {
   it("should get no music", async () => {
-    const response = await agent.get("recommendations");
+    const response = await agent.get("/recommendations");
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
 
   it("should get two musics", async () => {
     const musics = await MF.createTwoMusicsPosts();
-    const response = await agent.get("recommendations");
+    const response = await agent.get("/recommendations");
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
     expect(response.body[0].name).toBe("test 2");
@@ -29,7 +29,7 @@ describe("Music gets suite", () => {
   it("should get more than ten musics", async () => {
     const posts = 15;
     const musics = await MF.createMoreThanTenPosts(posts);
-    const response = await agent.get("recommendations");
+    const response = await agent.get("/recommendations");
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(10);
     expect(response.body[0].name).toBe(musics.name);
