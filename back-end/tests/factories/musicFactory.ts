@@ -54,3 +54,15 @@ export async function createMoreThanTenPosts(numberOfPosts: number) {
   }
   return music;
 }
+
+export async function createThreePostWithVotes() {
+  const upVotes = [240, 350, 100];
+  const isWrongLink = false;
+  for (let i = 0; i < upVotes.length; i++) {
+    const music = createMusicData(isWrongLink);
+    await prisma.recommendation.create({
+      data: { ...music, score: upVotes[i] },
+    });
+  }
+  return upVotes[1];
+}
