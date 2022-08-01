@@ -1,5 +1,4 @@
 import { jest } from "@jest/globals";
-import { response } from "express";
 import { recommendationRepository } from "../../src/repositories/recommendationRepository";
 import { recommendationService } from "../../src/services/recommendationsService.js";
 import * as MF from "./../factories/musicFactory.js";
@@ -70,13 +69,13 @@ describe("Recommendation service suite", () => {
   it("should vote correct", async () => {
     jest
       .spyOn(recommendationRepository, "find")
-      .mockImplementationOnce((id): any => true);
+      .mockImplementationOnce((): any => true);
 
     jest
       .spyOn(recommendationRepository, "updateScore")
       .mockImplementationOnce((): any => {});
 
-    const result = recommendationService.upvote(2);
+    const result = await recommendationService.upvote(2);
     expect(recommendationRepository.find).toBeCalledTimes(1);
     expect(recommendationRepository.updateScore).toBeCalledTimes(1);
   });
