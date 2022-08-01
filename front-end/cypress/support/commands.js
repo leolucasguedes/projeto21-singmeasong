@@ -5,7 +5,3 @@ Cypress.Commands.add("createPost", (post) => {
       }
     );
   });
-  
-  Cypress.Commands.add("resetPosts", () => {
-    cy.request("DELETE", "http://localhost:5000/reset");
-  });
