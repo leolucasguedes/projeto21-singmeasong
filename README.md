@@ -59,6 +59,10 @@ To run this project, you will need to add the following environment variables to
 ```bash
   npm run test
 ```
+- Cypress tests:
+```bash
+  npm run dev:test
+```
 - Integrations tests:
 ```bash
   npm run test:int

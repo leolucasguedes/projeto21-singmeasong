@@ -3,6 +3,7 @@
 import { faker } from "@faker-js/faker";
 
 before(() => {
+  cy.request("POST", "http://localhost:5000/reset", {});
   const musicData = {
     name: faker.name.findName(),
     youtubeLink: "https://www.youtube.com/watch?v=RVUMByhuOC8",
@@ -17,7 +18,7 @@ describe("Vote music suite", () => {
     cy.contains("0").as("votes");
     cy.intercept("POST", "/recommendations/1/upvote").as("upvotePost");
     cy.get('[data-identifier="upvote"]').click();
-    cy.wait("@upvotePost");
+    cy.wait(1000);
 
     cy.get("@votes").should("have.text", "1");
   });
@@ -29,7 +30,7 @@ describe("Vote music suite", () => {
     for (let i = 0; i < 3; i++) {
       cy.intercept("POST", "/recommendations/1/upvote").as("upvotePost");
       cy.get('[data-identifier="upvote"]').click();
-      cy.wait("@upvotePost");
+      cy.wait(1000);
     }
 
     cy.get("@votes").should("have.text", "4");
@@ -42,27 +43,21 @@ describe("Vote music suite", () => {
     for (let i = 0; i < 2; i++) {
       cy.intercept("POST", "/recommendations/1/downvote").as("downvotePost");
       cy.get('[data-identifier="downvote"]').click();
-      cy.wait("@downvotePost");
+      cy.wait(1000);
       cy.get("@votes").should("have.text", `${4 - 1 - i}`);
     }
   });
 
   it("should delete post cause downvote -5", () => {
-    const musicData = {
-      name: faker.name.findName(),
-      youtubeLink: "https://youtu.be/ALZHF5UqnU4",
-    };
-    cy.createPost(musicData);
-
     cy.visit("http://localhost:3000");
-    cy.contains("0").as("votes");
-    for (let i = 0; i < 6; i++) {
-      cy.get("@votes").should("have.text", `${0 - i}`);
+    cy.contains("2").as("votes");
+    for (let i = 0; i < 7; i++) {
+      cy.get("@votes").should("have.text", `${2 - i}`);
       cy.intercept("POST", "/recommendations/1/downvote").as("downvotePost");
       cy.get('[data-identifier="downvote"]').click();
-      cy.wait("@downvotePost");
+      cy.wait(1000);
     }
 
-    cy.contains(musicData.name).should("not.exist");
+    cy.contains('[data-identifier="vote-menu"]').should("not.exist");
   });
 });

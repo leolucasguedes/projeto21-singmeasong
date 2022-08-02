@@ -2,6 +2,10 @@
 
 import { faker } from "@faker-js/faker";
 
+beforeEach(() => {
+  cy.request("POST", "http://localhost:5000/reset", {});
+});
+
 describe("Music post suite", () => {
   it("should add new music post", () => {
     const musicData = {

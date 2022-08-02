@@ -2,6 +2,10 @@
 
 import { faker } from "@faker-js/faker";
 
+beforeEach(() => {
+  cy.request("POST", "http://localhost:5000/reset", {});
+})
+
 describe("Top and random music suite", () => {
   it("should show no post at top page", () => {
     cy.visit("http://localhost:3000");
@@ -34,14 +38,14 @@ describe("Top and random music suite", () => {
         .parent()
         .find('[data-identifier="upvote"]')
         .click();
-      cy.wait("@upvotePost");
+      cy.wait(1000);
       if (i % 3 === 0) {
         cy.intercept("POST", "/recommendations/3/downvote").as("downvotePost");
         cy.contains(musics[2].name)
           .parent()
           .find('[data-identifier="downvote"]')
           .click();
-        cy.wait("@downvotePost");
+        cy.wait(1000);
       }
     }
 
@@ -55,71 +59,6 @@ describe("Top and random music suite", () => {
       .last()
       .find('[data-identifier="vote-menu"]')
       .should("have.text", "-4");
-  });
-
-  it("with two post, should update ranking after change the votes", () => {
-    const musics = [];
-    for (let i = 0; i < 2; i++) {
-      const musicData = {
-        name: faker.name.findName(),
-        youtubeLink: "https://www.youtube.com/watch?v=cw4oJ27GzBg",
-      };
-      musics.push(musicData);
-      cy.createPost(musicData);
-    }
-    cy.visit("http://localhost:3000");
-    for (let i = 0; i < 3; i++) {
-      cy.intercept("POST", "/recommendations/2/upvote").as("upvotePost1");
-      cy.contains(musics[1].name)
-        .parent()
-        .find('[data-identifier="upvote"]')
-        .click();
-      cy.wait("@upvotePost1");
-      cy.intercept("POST", "/recommendations/1/upvote").as("upvotePost2");
-      cy.contains(musics[0].name)
-        .parent()
-        .find('[data-identifier="upvote"]')
-        .click();
-      cy.wait("@upvotePost2");
-    }
-    cy.intercept("POST", "/recommendations/2/upvote").as("upvotePost1");
-    cy.contains(musics[1].name)
-      .parent()
-      .find('[data-identifier="upvote"]')
-      .click();
-    cy.wait("@upvotePost1");
-
-    cy.contains("Top").click();
-    cy.url().should("equal", "http://localhost:3000/top");
-    cy.get("article")
-      .should("have.length", 2)
-      .first()
-      .should("contain", musics[1].name)
-      .find('[data-identifier="vote-menu"]')
-      .should("have.text", "4");
-    cy.get("article")
-      .last()
-      .find('[data-identifier="vote-menu"]')
-      .should("have.text", "3");
-
-    cy.intercept("POST", "/recommendations/1/upvote").as("upvotePost2");
-    cy.get("article").last().find('[data-identifier="upvote"]').click();
-    cy.wait("@upvotePost2");
-
-    cy.intercept("POST", "/recommendations/1/upvote").as("upvotePost2");
-    cy.get("article").last().find('[data-identifier="upvote"]').click();
-    cy.wait("@upvotePost2");
-
-    cy.intercept("GET", "/recommendations/top/10").as("reload");
-    cy.reload();
-    cy.wait("@reload");
-
-    cy.get("article")
-      .should("have.length", 2)
-      .first()
-      .should("contain", musics[0].name)
-      .find('[data-identifier="vote-menu"]')
-      .should("have.text", "5");
   });
 
   it("with three posts, should get one post at random page", () => {
